@@ -71,7 +71,7 @@
             }
 
             const base64 = btoa(`{"textures":{"SKIN":{"url":"${url}"}}}`);
-            let command = `/give @p minecraft:player_head{SkullOwner:{Name:"${name || 'CustomHead'}",Properties:{textures:[{Value:"${base64}"}]}}}`;
+            let command = `/give @p minecraft:player_head{SkullOwner:{Id:[I;0,0,0,0],Name:"${name || 'CustomHead'}",Properties:{textures:[{Value:"${base64}"}]}}}`;
 
             document.getElementById('output').innerText = command;
         }
