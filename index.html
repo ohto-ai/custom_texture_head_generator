@@ -83,7 +83,7 @@
             }
 
             const base64 = btoa(`{"textures":{"SKIN":{"url":"${url}"}}}`);
-            const nbtData = `{SkullOwner:{Name:"${name || 'CustomHead'}",Properties:{textures:[{Value:"${base64}"}]}}}`;
+            const nbtData = `{SkullOwner:{Id:[I;0,0,0,0],Name:"${name || 'CustomHead'}",Properties:{textures:[{Value:"${base64}"}]}}}`;
             
             let command;
             if (isPaper) {
