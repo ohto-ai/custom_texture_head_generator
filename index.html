@@ -15,12 +15,12 @@
             text-align: center;
             color: #61dafb;
         }
-        label, input {
+        label, input, select {
             display: block;
             width: 100%;
             margin: 10px 0;
         }
-        input {
+        input, select {
             padding: 10px;
             font-size: 16px;
             border-radius: 5px;
@@ -51,19 +51,31 @@
 </head>
 <body>
     <h1>Minecraft 自定义纹理头颅生成器</h1>
+    
+    <label for="target">Give目标:</label>
+    <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onblur="generateCommand()">
+    
     <label for="url">皮肤纹理URL:</label>
     <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onblur="generateCommand()">
     
-    <label for="name">自定义玩家名称:</label>
+    <label for="name">自定义头颅玩家名称:</label>
     <input type="text" id="name" placeholder="请输入自定义玩家名称 (可选)" onblur="generateCommand()">
+    
+    <label for="isPaper">是否为Paper端:</label>
+    <select id="isPaper" onchange="generateCommand()">
+        <option value="false">否</option>
+        <option value="true">是</option>
+    </select>
     
     <div class="output" id="output">指令将在此处显示</div>
     <div class="copy-btn" onclick="copyCommand()">复制指令</div>
 
     <script>
         function generateCommand() {
+            const target = document.getElementById('target').value.trim();
             const url = document.getElementById('url').value.trim();
             const name = document.getElementById('name').value.trim();
+            const isPaper = document.getElementById('isPaper').value === 'true';
             
             if (!url) {
                 document.getElementById('output').innerText = '请填写皮肤纹理URL';
@@ -71,7 +83,14 @@
             }
 
             const base64 = btoa(`{"textures":{"SKIN":{"url":"${url}"}}}`);
-            let command = `/give @p minecraft:player_head{SkullOwner:{Id:[I;0,0,0,0],Name:"${name || 'CustomHead'}",Properties:{textures:[{Value:"${base64}"}]}}}`;
+            const nbtData = `{SkullOwner:{Name:"${name || 'CustomHead'}",Properties:{textures:[{Value:"${base64}"}]}}}`;
+            
+            let command;
+            if (isPaper) {
+                command = `/give ${target || '@p'} player_head 1 ${nbtData}`;
+            } else {
+                command = `/give ${target || '@p'} minecraft:player_head${nbtData}`;
+            }
 
             document.getElementById('output').innerText = command;
         }
@@ -90,7 +109,6 @@
             document.execCommand('copy', true);
             document.body.removeChild(textarea);
 
-            // 'copy-btn' 显示复制成功，并在2s后恢复文字
             const copyBtn = document.querySelector('.copy-btn');
             copyBtn.innerText = '复制成功';
             setTimeout(() => {
