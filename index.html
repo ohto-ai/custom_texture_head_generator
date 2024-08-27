@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft 头颅生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #282c34;
+            color: #ffffff;
+        }
+        h1 {
+            text-align: center;
+            color: #61dafb;
+        }
+        label, input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            background-color: #3a3f4b;
+            color: #ffffff;
+        }
+        .output, .copy-btn {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #3a3f4b;
+            border-radius: 5px;
+            border: 1px solid #61dafb;
+            font-size: 14px;
+            color: #61dafb;
+            word-wrap: break-word;
+            text-align: center;
+        }
+        .copy-btn {
+            cursor: pointer;
+            background-color: #61dafb;
+            color: #282c34;
+        }
+        .copy-btn:hover {
+            background-color: #21a1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Minecraft 自定义纹理头颅生成器</h1>
+    <label for="url">皮肤纹理URL:</label>
+    <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onblur="generateCommand()">
+    
+    <label for="name">自定义玩家名称:</label>
+    <input type="text" id="name" placeholder="请输入自定义玩家名称 (可选)" onblur="generateCommand()">
+    
+    <div class="output" id="output">指令将在此处显示</div>
+    <div class="copy-btn" onclick="copyCommand()">复制指令</div>
+
+    <script>
+        function generateCommand() {
+            const url = document.getElementById('url').value.trim();
+            const name = document.getElementById('name').value.trim();
+            
+            if (!url) {
+                document.getElementById('output').innerText = '请填写皮肤纹理URL';
+                return;
+            }
+
+            const base64 = btoa(`{"textures":{"SKIN":{"url":"${url}"}}}`);
+            let command = `/give @p minecraft:player_head{SkullOwner:{Name:"${name || 'CustomHead'}",Properties:{textures:[{Value:"${base64}"}]}}}`;
+
+            document.getElementById('output').innerText = command;
+        }
+
+        function copyCommand() {
+            generateCommand();
+            const output = document.getElementById('output').innerText;
+
+            var textarea = document.createElement('textarea');
+            document.body.appendChild(textarea);
+            textarea.style.position = 'fixed';
+            textarea.style.clip = 'rect(0 0 0 0)';
+            textarea.style.top = '10px';
+            textarea.value = output;
+            textarea.select();
+            document.execCommand('copy', true);
+            document.body.removeChild(textarea);
+
+            // 'copy-btn' 显示复制成功，并在2s后恢复文字
+            const copyBtn = document.querySelector('.copy-btn');
+            copyBtn.innerText = '复制成功';
+            setTimeout(() => {
+                copyBtn.innerText = '复制指令';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
