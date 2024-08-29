@@ -4,85 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OhtoAi - Minecraft 自定义纹理头颅生成器</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #282c34;
-            color: #ffffff;
-        }
-        h1 {
-            text-align: center;
-            color: #61dafb;
-        }
-        label, input, select {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-        }
-        input[type="text"], select {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: none;
-            background-color: #3a3f4b;
-            color: #ffffff;
-        }
-        a {
-            color: #61dafb;
-            text-decoration: none;
-        }
-        a :hover {
-            text-decoration: underline;
-        }
-        .output, .copy-btn {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #3a3f4b;
-            border-radius: 5px;
-            border: 1px solid #61dafb;
-            font-size: 14px;
-            color: #61dafb;
-            word-wrap: break-word;
-            text-align: center;
-        }
-        .copy-btn {
-            cursor: pointer;
-            background-color: #61dafb;
-            color: #282c34;
-        }
-        .copy-btn:hover {
-            background-color: #21a1f1;
-        }
-        #head-preview {
-            display: block;
-            margin: 20px auto;
-            width: 64px;
-            height: 64px;
-            background-color: #3a3f4b;
-            border-radius: 10px;
-        }
-
-        #content-container {
-            margin: 20;
-        }
-
-        #head-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    </style>
+    <link rel="stylesheet" href="styles/index.css">
 </head>
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <h1>OhtoAi - Minecraft 自定义纹理头颅生成器</h1>
     <div class="#content-container">
         <label for="target">Give目标:</label>
         <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onblur="generateCommand()">
     
         <label for="url">皮肤纹理URL:</label>
-        <p>由于客户端信任白名单，请使用textures.minecraft.net域名下的纹理链接</p>
+        <p><i>由于客户端信任白名单，请使用textures.minecraft.net域名下的纹理链接</i></p>
         <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onblur="generateCommand()">
         
         <label for="name">玩家名称:</label>
@@ -103,146 +34,8 @@
         <div class="output" id="output">指令将在此处显示</div>
         <div class="copy-btn" onclick="copyCommand()">复制指令</div>
     </div>
-    <script>
-        const container = document.getElementById('head-container');
-        const scene = new THREE.Scene();
-        width = 2;
-        height = 2;
-        const camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 100);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(100, 100);
-        container.appendChild(renderer.domElement);
-        let head;
-        let head_outer;
-        function loadSkin() {
-            const skinUrl = document.getElementById('url').value;
-            const textureLoader = new THREE.TextureLoader();
-            textureLoader.load(skinUrl, function (texture) {
-                if (head) {
-                    scene.remove(head);
-                    scene.remove(head_outer);
-                }
-
-                texture.magFilter = THREE.NearestFilter;
-                texture.minFilter = THREE.LinearMipMapLinearFilter;
-
-                // Adjust texture coordinates for each face
-                const faceWidth = 8 / 64;  // Width of one face in UV space
-                const faceHeight = 8 / 64; // Height of one face in UV space
-
-                const head_uv_map = [
-                    // Left face
-                    new THREE.Vector2(2 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(3 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(2 * faceWidth, 6 * faceWidth),
-                    new THREE.Vector2(3 * faceWidth, 6 * faceWidth),
-
-                    // Right face
-                    new THREE.Vector2(0 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(1 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(0 * faceWidth, 6 * faceWidth),
-                    new THREE.Vector2(1 * faceWidth, 6 * faceWidth),
-
-                    // Top face
-                    new THREE.Vector2(1 * faceWidth, 8 * faceWidth),
-                    new THREE.Vector2(2 * faceWidth, 8 * faceWidth),
-                    new THREE.Vector2(1 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(2 * faceWidth, 7 * faceWidth),
-
-                    // Bottom face
-                    new THREE.Vector2(2 * faceWidth, 8 * faceWidth),
-                    new THREE.Vector2(3 * faceWidth, 8 * faceWidth),
-                    new THREE.Vector2(2 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(3 * faceWidth, 7 * faceWidth),
-
-                    // Front face
-                    new THREE.Vector2(1 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(2 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(1 * faceWidth, 6 * faceWidth),
-                    new THREE.Vector2(2 * faceWidth, 6 * faceWidth),
-
-                    // Back face
-                    new THREE.Vector2(3 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(4 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(3 * faceWidth, 6 * faceWidth),
-                    new THREE.Vector2(4 * faceWidth, 6 * faceWidth),
-                ];
-
-                const head_outer_uv_map = [
-                    // Left face
-                    new THREE.Vector2(6 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(7 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(6 * faceWidth, 6 * faceWidth),
-                    new THREE.Vector2(7 * faceWidth, 6 * faceWidth),
-
-                    // Right face
-                    new THREE.Vector2(4 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(5 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(4 * faceWidth, 6 * faceWidth),
-                    new THREE.Vector2(5 * faceWidth, 6 * faceWidth),
-
-                    // Top face
-                    new THREE.Vector2(5 * faceWidth, 8 * faceWidth),
-                    new THREE.Vector2(6 * faceWidth, 8 * faceWidth),
-                    new THREE.Vector2(5 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(6 * faceWidth, 7 * faceWidth),
-
-                    // Bottom face
-                    new THREE.Vector2(6 * faceWidth, 8 * faceWidth),
-                    new THREE.Vector2(7 * faceWidth, 8 * faceWidth),
-                    new THREE.Vector2(6 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(7 * faceWidth, 7 * faceWidth),
-
-                    // Front face
-                    new THREE.Vector2(5 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(6 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(5 * faceWidth, 6 * faceWidth),
-                    new THREE.Vector2(6 * faceWidth, 6 * faceWidth),
-
-                    // Back face
-                    new THREE.Vector2(7 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(8 * faceWidth, 7 * faceWidth),
-                    new THREE.Vector2(7 * faceWidth, 6 * faceWidth),
-                    new THREE.Vector2(8 * faceWidth, 6 * faceWidth),
-                ];
-
-                // Create a 3D head using a box geometry
-                const headGeometry = new THREE.BoxGeometry();
-                const headOuterGeometry = new THREE.BoxGeometry();
-                const head_uv = headGeometry.attributes.uv;
-                const head_outer_uv = headOuterGeometry.attributes.uv;
-                
-                for (let i = 0; i < head_uv.count; i++) {
-                    head_uv.setXY(i, head_uv_map[i].x, head_uv_map[i].y);
-                    head_outer_uv.setXY(i, head_outer_uv_map[i].x, head_outer_uv_map[i].y);
-                }
-                head_uv.needsUpdate = true;
-                head_outer_uv.needsUpdate = true;
-
-                const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-                head = new THREE.Mesh(headGeometry, material);
-                head_outer = new THREE.Mesh(headOuterGeometry, material);
-                head_outer.scale.set(1.1, 1.1, 1.1); // Slightly larger than the head
-                scene.add(head);
-                scene.add(head_outer);
-
-                head.position.set(0, 0, 0);
-                head_outer.position.set(0, 0, 0);
-                camera.position.set(1.5, 1.5, 2.5); // Adjusted camera position to better view the top
-                camera.lookAt(0, 0, 0);
-            });
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            if (head) {
-                head.rotation.y += 0.01;
-                head_outer.rotation.y += 0.01;
-            }
-            renderer.render(scene, camera);
-        }
-        animate();
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="scripts/3d.js"></script>
     <script>
         function generateCommand() {
             updateHeadPreview();
@@ -323,8 +116,7 @@
                 copyBtn.innerText = '复制指令';
             }, 2000);
         }
-    
-        // 如果参数包含texture或者t, 则自动将参数填充到url输入框
+
         const url = new URL(window.location);
         const texture = url.searchParams.get('texture');
         const t = url.searchParams.get('t');
