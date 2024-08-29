@@ -32,6 +32,13 @@
             margin-right: 10px;
             vertical-align: middle;
         }
+        a {
+            color: #61dafb;
+            text-decoration: none;
+        }
+        a :hover {
+            text-decoration: underline;
+        }
         .output, .copy-btn {
             margin-top: 20px;
             padding: 15px;
@@ -68,10 +75,11 @@
     <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onblur="generateCommand()">
     
     <label for="url">皮肤纹理URL:</label>
+    <p>由于客户端信任白名单，请使用textures.minecraft.net域名下的纹理链接</p>
     <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onblur="generateCommand()">
     
-    <label for="name">自定义头颅玩家名称:</label>
-    <input type="text" id="name" placeholder="请输入自定义玩家名称 (可选)" onblur="generateCommand()">
+    <label for="name">玩家名称:</label>
+    <input type="text" id="name" placeholder="玩家 (可选)" onblur="generateCommand()">
     
     <label for="isPaper">是否为Paper端:</label>
     <select id="isPaper" onchange="generateCommand()">
@@ -97,9 +105,12 @@
                 return;
             }
 
+            const site_url = window.location.toString().match(/(http|https):\/\/[^/]+/)[0];
             const base64 = btoa(`{"textures":{"SKIN":{"url":"${url}"}}}`);
-            const nbtData = `{SkullOwner:{Id:[I;0,0,0,0],Name:"${name || 'CustomHead'}",Properties:{textures:[{Value:"${base64}"}]}}}`;
-            
+            const name_prop = name ? `,Name:"${name}"` : '';
+            const lore_display = `,Lores:["{\"text\":\"https://namemc.com/skin/e05c729e5f895013\"}"]`;
+            const nbtData = `{SkullOwner:{Id:[I;0,0,0,0]${name_prop},Properties:{textures:[{Value:"${base64}"}]}},display:{Lore:["{\\"text\\":\\"${site_url}\\"}"]}}`;
+
             let command;
             if (isPaper) {
                 command = `/give ${target || '@p'} player_head 1 ${nbtData}`;
@@ -133,8 +144,15 @@
         }
 
         function copyCommand() {
+            const url = document.getElementById('url').value.trim();
+            if (url == '') {
+                alert('请填写皮肤纹理URL');
+                return;
+            }
             generateCommand();
             const output = document.getElementById('output').innerText;
+            // 判断url是否是textures.minecraft.net域名
+            url.match(/(http|https):\/\/textures\.minecraft\.net/) || alert('非textures.minecraft.net域名下的纹理链接，可能无法被客户端信任');
 
             var textarea = document.createElement('textarea');
             document.body.appendChild(textarea);
