@@ -20,13 +20,17 @@
             width: 100%;
             margin: 10px 0;
         }
-        input, select {
+        input[type="text"], select {
             padding: 10px;
             font-size: 16px;
             border-radius: 5px;
             border: none;
             background-color: #3a3f4b;
             color: #ffffff;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+            vertical-align: middle;
         }
         .output, .copy-btn {
             margin-top: 20px;
@@ -47,6 +51,14 @@
         .copy-btn:hover {
             background-color: #21a1f1;
         }
+        #head-preview {
+            display: block;
+            margin: 20px auto;
+            width: 64px;
+            height: 64px;
+            background-color: #3a3f4b;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -66,12 +78,15 @@
         <option value="false">否</option>
         <option value="true">是</option>
     </select>
+
+    <canvas id="head-preview" width="64" height="64"></canvas>
     
     <div class="output" id="output">指令将在此处显示</div>
     <div class="copy-btn" onclick="copyCommand()">复制指令</div>
 
     <script>
         function generateCommand() {
+            updateHeadPreview();
             const target = document.getElementById('target').value.trim();
             const url = document.getElementById('url').value.trim();
             const name = document.getElementById('name').value.trim();
@@ -93,6 +108,28 @@
             }
 
             document.getElementById('output').innerText = command;
+        }
+
+        function updateHeadPreview() {
+            const url = document.getElementById('url').value.trim();
+            if (url) {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.src = url;
+                img.onload = function() {
+                    const canvas = document.getElementById('head-preview');
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 8, 8, 8, 8, 0, 0, 64, 64);
+                };
+            } else {
+                const canvas = document.getElementById('head-preview');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#3a3f4b";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
         }
 
         function copyCommand() {
