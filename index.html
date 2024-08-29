@@ -170,6 +170,15 @@
                 copyBtn.innerText = '复制指令';
             }, 2000);
         }
+    
+        // 如果参数包含texture或者t, 则自动将参数填充到url输入框
+        const url = new URL(window.location);
+        const texture = url.searchParams.get('texture');
+        const t = url.searchParams.get('t');
+        if (texture || t) {
+            document.getElementById('url').value = `https://textures.minecraft.net/texture/${texture||t}`;
+            generateCommand();
+        }
     </script>
 </body>
 </html>
