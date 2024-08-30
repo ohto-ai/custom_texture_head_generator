@@ -120,15 +120,12 @@
         }
 
         const url = new URL(window.location);
-        const texture = url.searchParams.get('texture');
-        const t = url.searchParams.get('t');
-        if (texture || t) {
+        const texture = url.searchParams.get('texture') || url.searchParams.get('t');
+        if (texture) {
             if (texture.length == 64) {
                 document.getElementById('url').value = `https://textures.minecraft.net/texture/${texture}`;
-            } else if (t.length == 64) {
-                document.getElementById('url').value = `https://textures.minecraft.net/texture/${t}`;
             } else {
-                document.getElementById('url').value = `${site_url}/uploads/${texture||t}.png`;
+                document.getElementById('url').value = `${site_url}/uploads/${texture}.png`;
             }
             generateCommand();
         } else {
