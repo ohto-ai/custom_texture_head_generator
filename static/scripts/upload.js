@@ -14,7 +14,7 @@ function uploadSkin() {
             if (data.success) {
                 const site_url = window.location.toString().match(/(http|https):\/\/[^/]+/)[0];
                 document.getElementById('url').value = `${site_url}${data.url}`;
-                generateCommand();
+                updateHeadPreview();
             } else {
                 alert('上传失败: ' + data.message);
             }

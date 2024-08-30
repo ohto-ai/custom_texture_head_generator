@@ -10,17 +10,17 @@
     <h1>OhtoAi - Minecraft 自定义纹理头颅生成器</h1>
     <div class="#content-container">
         <label for="target">Give目标:</label>
-        <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onblur="generateCommand()">
+        <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onchange="generateCommand()">
     
         <label for="url">皮肤纹理URL:<a href="javascript:fileUpload.click();" class="file">
             上传本地皮肤<input type="file" id="fileUpload" accept="image/png" onchange="uploadSkin()" />
         </a></label>
         
         <p><i>由于客户端信任白名单，请使用textures.minecraft.net域名下的纹理链接，否则仅可预览</i></p>
-        <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onblur="generateCommand()">
+        <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onchange="updateHeadPreview()">
         
         <label for="name">玩家名称:</label>
-        <input type="text" id="name" placeholder="玩家 (可选)" onblur="generateCommand()">
+        <input type="text" id="name" placeholder="玩家 (可选)" onchange="generateCommand()">
         
         <label for="isPaper">是否为Paper端:</label>
         <select id="isPaper" onchange="generateCommand()">
@@ -38,11 +38,9 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="scripts/3d.js"></script>
-    <script src="scripts/upload.js"></script>
     <script>
         const site_url = window.location.toString().match(/(http|https):\/\/[^/]+/)[0];
         function generateCommand() {
-            updateHeadPreview();
             const target = document.getElementById('target').value.trim();
             const url = document.getElementById('url').value.trim();
             const name = document.getElementById('name').value.trim();
@@ -89,6 +87,7 @@
             }
             
             loadSkin();
+            generateCommand();
         }
 
         function copyCommand() {
@@ -127,11 +126,11 @@
             } else {
                 document.getElementById('url').value = `${site_url}/uploads/${texture}.png`;
             }
-            generateCommand();
         } else {
             document.getElementById('url').value = `${site_url}/ohtoai.png`;
-            updateHeadPreview();
         }
+        updateHeadPreview();
     </script>
+    <script src="scripts/upload.js"></script>
 </body>
 </html>
