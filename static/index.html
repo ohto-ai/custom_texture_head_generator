@@ -57,7 +57,7 @@
             skinUrl = new URL(skin_url);
             if (skinUrl.hostname == 'textures.minecraft.net') {
                 id = skinUrl.pathname.split('/').pop();
-            } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.startsWith('/uploads/')) {
+            } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.includes('uploads')) {
                 id = skinUrl.pathname.split('/').pop().split('.').shift();
             }
 

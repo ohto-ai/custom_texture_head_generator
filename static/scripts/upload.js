@@ -29,7 +29,7 @@ function uploadSkin() {
 }
 
 function health_check() {
-    fetch('/health_check')
+    fetch('health_check')
     .then(response => response.json())
     .then(data => {
         if (!data.success) {
