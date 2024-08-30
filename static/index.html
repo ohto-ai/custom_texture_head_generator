@@ -60,6 +60,8 @@
         health_check(data => {
             if (!data.success) {
                 document.getElementById('file_upload').style.display = 'none';
+            } else {
+                document.getElementById('file_upload').style.display = 'inline';
             }
         });
 
