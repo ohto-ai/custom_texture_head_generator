@@ -12,8 +12,10 @@
         <label for="target">Give目标:</label>
         <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onblur="generateCommand()">
     
-        <label for="url">皮肤纹理URL:</label>
-        <p>上传本地皮肤<input type="file" id="fileUpload" accept="image/png" onchange="uploadSkin()" /></p>
+        <label for="url">皮肤纹理URL:<a href="javascript:fileUpload.click();" class="file">
+            上传本地皮肤<input type="file" id="fileUpload" accept="image/png" onchange="uploadSkin()" />
+        </a></label>
+        
         <p><i>由于客户端信任白名单，请使用textures.minecraft.net域名下的纹理链接，否则仅可预览</i></p>
         <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onblur="generateCommand()">
         
@@ -38,6 +40,7 @@
     <script src="scripts/3d.js"></script>
     <script src="scripts/upload.js"></script>
     <script>
+        const site_url = window.location.toString().match(/(http|https):\/\/[^/]+/)[0];
         function generateCommand() {
             updateHeadPreview();
             const target = document.getElementById('target').value.trim();
@@ -50,10 +53,8 @@
                 return;
             }
 
-            const site_url = window.location.toString().match(/(http|https):\/\/[^/]+/)[0];
             const base64 = btoa(`{"textures":{"SKIN":{"url":"${url}"}}}`);
             const name_prop = name ? `,Name:"${name}"` : '';
-            const lore_display = `,Lores:["{\"text\":\"https://namemc.com/skin/e05c729e5f895013\"}"]`;
             const nbtData = `{SkullOwner:{Id:[I;0,0,0,0]${name_prop},Properties:{textures:[{Value:"${base64}"}]}},display:{Lore:["{\\"text\\":\\"${site_url}\\"}"]}}`;
 
             let command;
@@ -125,7 +126,7 @@
             document.getElementById('url').value = `https://textures.minecraft.net/texture/${texture||t}`;
             generateCommand();
         } else {
-            document.getElementById('url').value = "ohtoai.png";
+            document.getElementById('url').value = `${site_url}/ohtoai.png`;
             updateHeadPreview();
         }
     </script>
