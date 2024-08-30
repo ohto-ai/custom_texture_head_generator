@@ -58,7 +58,7 @@
         }
 
         health_check(data => {
-            if (server_online) {
+            if (!server_online) {
                 document.getElementById('file_upload').style.display = 'none';
             } else {
                 document.getElementById('file_upload').style.display = 'inline';
