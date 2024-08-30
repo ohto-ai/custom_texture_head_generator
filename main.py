@@ -51,5 +51,9 @@ def uploaded_file(filename):
 def static_file(filename):
     return send_from_directory(STATIC_FOLDER, filename)
 
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return send_from_directory(STATIC_FOLDER, 'index.html')
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8050)
