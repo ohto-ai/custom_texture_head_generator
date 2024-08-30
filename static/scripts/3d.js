@@ -9,7 +9,7 @@ container.appendChild(renderer.domElement);
 let head;
 let head_outer;
 function loadSkin() {
-    const skinUrl = document.getElementById('url').value;
+    const skinUrl = document.getElementById('skin_url').value;
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load(skinUrl, function (texture) {
         resetSkin();

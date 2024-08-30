@@ -13,7 +13,7 @@ function uploadSkin() {
         .then(data => {
             if (data.success) {
                 const site_url = window.location.toString().match(/(http|https):\/\/[^/]+/)[0];
-                document.getElementById('url').value = `${site_url}${data.url}`;
+                document.getElementById('skin_url').value = `${site_url}${data.url}`;
                 updateHeadPreview();
             } else {
                 alert('上传失败: ' + data.message);
@@ -27,3 +27,18 @@ function uploadSkin() {
         alert('请选择一个有效的PNG文件。');
     }
 }
+
+function health_check() {
+    fetch('/health_check')
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            document.getElementById('file_upload').style.display = 'none';
+        }
+    })
+    .catch(error => {
+        document.getElementById('file_upload').style.display = 'none';
+    });
+}
+
+health_check();

@@ -12,12 +12,14 @@
         <label for="target">Give目标:</label>
         <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onchange="generateCommand()">
     
-        <label for="url">皮肤纹理URL:<a href="javascript:fileUpload.click();" class="file">
+        <label for="skin_url">皮肤纹理URL:
+            <a id="file_upload" href="javascript:fileUpload.click();" class="file">
             上传本地皮肤<input type="file" id="fileUpload" accept="image/png" onchange="uploadSkin()" />
-        </a></label>
+            </a>
+        </label>
         
         <p><i>由于客户端信任白名单，请使用textures.minecraft.net域名下的纹理链接，否则仅可预览</i></p>
-        <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onchange="updateHeadPreview()">
+        <input type="text" id="skin_url" placeholder="请输入皮肤纹理的URL" onchange="updateHeadPreview()">
         
         <label for="name">玩家名称:</label>
         <input type="text" id="name" placeholder="玩家 (可选)" onchange="generateCommand()">
@@ -39,44 +41,39 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="scripts/3d.js"></script>
     <script>
-        const site_url = window.location.toString().match(/(http|https):\/\/[^/]+/)[0];
+        const scheme_domain = `${window.location.protocol}//${window.location.host}`;
         function generateCommand() {
             const target = document.getElementById('target').value.trim();
-            const url = document.getElementById('url').value.trim();
+            const skin_url = document.getElementById('skin_url').value.trim();
             const name = document.getElementById('name').value.trim();
             const isPaper = document.getElementById('isPaper').value === 'true';
             let id;
             
-            if (!url) {
+            if (!skin_url) {
                 document.getElementById('output').innerText = '请填写皮肤纹理URL';
                 return;
             }
 
-            // 如果URL是textures.minecraft.net域名或者和本机相同域名，则提取最后的字段
-            const url_match = url.match(/(http|https):\/\/textures\.minecraft\.net\/texture\/([0-9a-f]{64})/);
-            if (url_match) {
-                id = url_match[2];
-            } else {
-                const url_match = url.match(/(http|https):\/\/[^/]+\/uploads\/([0-9a-f]+)\.png/);
-                if (url_match) {
-                    id = url_match[2];
-                }
-            }
-            if (!!id) {
-                // 修改地址栏为?texture=${id}
-                const url = new URL(window.location);
-                url.searchParams.set('texture', id);
-                window.history.pushState({}, 0, url);
-            } else {
-                // 如果不是textures.minecraft.net域名，则清空地址栏
-                const url = new URL(window.location);
-                url.searchParams.delete('texture');
-                window.history.pushState({}, 0, url);
+            skinUrl = new URL(skin_url);
+            if (skinUrl.hostname == 'textures.minecraft.net') {
+                id = skinUrl.pathname.split('/').pop();
+            } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.startsWith('/uploads/')) {
+                id = skinUrl.pathname.split('/').pop().split('.').shift();
             }
 
-            const base64 = btoa(`{"textures":{"SKIN":{"url":"${url}"}}}`);
+            if (!!id) {
+                const location_url = new URL(window.location);
+                location_url.searchParams.set('texture', id);
+                window.history.pushState({}, 0, location_url);
+            } else {
+                const location_url = new URL(window.location);
+                location_url.searchParams.delete('texture');
+                window.history.pushState({}, 0, location_url);
+            }
+
+            const base64 = btoa(`{"textures":{"SKIN":{"url":"${skin_url}"}}}`);
             const name_prop = name ? `,Name:"${name}"` : '';
-            const nbtData = `{SkullOwner:{Id:[I;0,0,0,0]${name_prop},Properties:{textures:[{Value:"${base64}"}]}},display:{Lore:["{\\"text\\":\\"${site_url}\\"}"]}}`;
+            const nbtData = `{SkullOwner:{Id:[I;0,0,0,0]${name_prop},Properties:{textures:[{Value:"${base64}"}]}},display:{Lore:["{\\"text\\":\\"${scheme_domain}\\"}"]}}`;
 
             let command;
             if (isPaper) {
@@ -89,11 +86,11 @@
         }
 
         function updateHeadPreview() {
-            const url = document.getElementById('url').value.trim();
-            if (url) {
+            const skin_url = document.getElementById('skin_url').value.trim();
+            if (skin_url) {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
-                img.src = url;
+                img.src = skin_url;
                 img.onload = function() {
                     const canvas = document.getElementById('head-preview');
                     const ctx = canvas.getContext('2d');
@@ -115,15 +112,16 @@
         }
 
         function copyCommand() {
-            const url = document.getElementById('url').value.trim();
-            if (url == '') {
+            const skin_url = document.getElementById('skin_url').value.trim();
+            if (skin_url == '') {
                 alert('请填写皮肤纹理URL');
                 return;
             }
             generateCommand();
             const output = document.getElementById('output').innerText;
-            // 判断url是否是textures.minecraft.net域名
-            url.match(/(http|https):\/\/textures\.minecraft\.net/) || alert('非textures.minecraft.net域名下的纹理链接，可能无法被客户端信任');
+            if (URL(skin_url).hostname != 'textures.minecraft.net') {
+                alert('非textures.minecraft.net域名下的纹理链接，可能无法被客户端信任');
+            }
 
             var textarea = document.createElement('textarea');
             document.body.appendChild(textarea);
@@ -147,12 +145,12 @@
             const texture = location_url.searchParams.get('texture') || location_url.searchParams.get('t');
             if (texture) {
                 if (texture.length == 64) {
-                    document.getElementById('url').value = `https://textures.minecraft.net/texture/${texture}`;
+                    document.getElementById('skin_url').value = `https://textures.minecraft.net/texture/${texture}`;
                 } else {
-                    document.getElementById('url').value = `${site_url}/uploads/${texture}.png`;
+                    document.getElementById('skin_url').value = `${scheme_domain}/uploads/${texture}.png`;
                 }
             } else {
-                document.getElementById('url').value = `${site_url}/ohtoai.png`;
+                document.getElementById('skin_url').value = `${scheme_domain}/ohtoai.png`;
             }
             updateHeadPreview();
         }

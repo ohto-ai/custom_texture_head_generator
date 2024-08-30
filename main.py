@@ -51,7 +51,11 @@ def uploaded_file(filename):
 def static_file(filename):
     return send_from_directory(STATIC_FOLDER, filename)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/health_check', methods=['GET', 'POST'])
+def health():
+    return jsonify(success=True)
+
+@app.route('/', methods=['GET'])
 def index():
     return send_from_directory(STATIC_FOLDER, 'index.html')
 
