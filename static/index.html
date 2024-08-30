@@ -42,24 +42,26 @@
     <script src="scripts/3d.js"></script>
     <script>
         
-        let server_online = true;
-        function health_check() {
+        let server_online = false;
+        function health_check(callback) {
             fetch('health_check')
             .then(response => response.json())
             .then(data => {
-                if (!data.success) {
-                    server_online = false;
+                if (data.success) {
+                    server_online = true;
                 }
+                callback(data)
             })
             .catch(error => {
                 server_online = false;
             });
         }
 
-        health_check();
-        if (server_online) {
-            document.getElementById('file_upload').style.display = 'inline';
-        }
+        health_check(data => {
+            if (!data.success) {
+                document.getElementById('file_upload').style.display = 'none';
+            }
+        });
 
         const scheme_domain = `${window.location.protocol}//${window.location.host}`;
         const scheme_domain_path = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
