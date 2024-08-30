@@ -85,10 +85,12 @@
             if (!!id) {
                 const location_url = new URL(window.location);
                 location_url.searchParams.set('texture', id);
+                location_url.searchParams.delete('t');
                 window.history.pushState({}, 0, location_url);
             } else {
                 const location_url = new URL(window.location);
                 location_url.searchParams.delete('texture');
+                location_url.searchParams.delete('t');
                 window.history.pushState({}, 0, location_url);
             }
 
