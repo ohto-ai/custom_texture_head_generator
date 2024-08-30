@@ -12,10 +12,7 @@ function loadSkin() {
     const skinUrl = document.getElementById('url').value;
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load(skinUrl, function (texture) {
-        if (head) {
-            scene.remove(head);
-            scene.remove(head_outer);
-        }
+        resetSkin();
 
         texture.magFilter = THREE.NearestFilter;
         texture.minFilter = THREE.LinearMipMapLinearFilter;
@@ -125,6 +122,13 @@ function loadSkin() {
         camera.position.set(1.5, 1.5, 2.5); // Adjusted camera position to better view the top
         camera.lookAt(0, 0, 0);
     });
+}
+
+function resetSkin() {
+    if (head) {
+        scene.remove(head);
+        scene.remove(head_outer);
+    }
 }
 
 function animate() {
