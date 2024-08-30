@@ -28,17 +28,3 @@ function uploadSkin() {
     }
 }
 
-function health_check() {
-    fetch('health_check')
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            document.getElementById('file_upload').style.display = 'none';
-        }
-    })
-    .catch(error => {
-        document.getElementById('file_upload').style.display = 'none';
-    });
-}
-
-health_check();

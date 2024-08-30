@@ -13,7 +13,7 @@
         <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onchange="generateCommand()">
     
         <label for="skin_url">皮肤纹理URL:
-            <a id="file_upload" href="javascript:fileUpload.click();" class="file">
+            <a id="file_upload" style="display: none;" href="javascript:fileUpload.click();" class="file">
             上传本地皮肤<input type="file" id="fileUpload" accept="image/png" onchange="uploadSkin()" />
             </a>
         </label>
@@ -41,7 +41,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="scripts/3d.js"></script>
     <script>
+        
+        let server_online = true;
+        function health_check() {
+            fetch('health_check')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    server_online = false;
+                }
+            })
+            .catch(error => {
+                server_online = false;
+            });
+        }
+
+        health_check();
+        if (server_online) {
+            document.getElementById('file_upload').style.display = 'inline';
+        }
+
         const scheme_domain = `${window.location.protocol}//${window.location.host}`;
+        const scheme_domain_path = `${window.location.protocol}//${window.location.host}/${window.location.pathname.split('/').slice(0, -1).join('/')}`;
         function generateCommand() {
             const target = document.getElementById('target').value.trim();
             const skin_url = document.getElementById('skin_url').value.trim();
@@ -147,10 +168,10 @@
                 if (texture.length == 64) {
                     document.getElementById('skin_url').value = `https://textures.minecraft.net/texture/${texture}`;
                 } else {
-                    document.getElementById('skin_url').value = `${scheme_domain}/uploads/${texture}.png`;
+                    document.getElementById('skin_url').value = `${scheme_domain_path}uploads/${texture}.png`;
                 }
             } else {
-                document.getElementById('skin_url').value = `${scheme_domain}/ohtoai.png`;
+                document.getElementById('skin_url').value = `${scheme_domain_path}ohtoai.png`;
             }
             updateHeadPreview();
         }
