@@ -13,7 +13,8 @@
         <input type="text" id="target" placeholder="请输入Give的目标 (默认@p)" value="@p" onblur="generateCommand()">
     
         <label for="url">皮肤纹理URL:</label>
-        <p><i>由于客户端信任白名单，请使用textures.minecraft.net域名下的纹理链接</i></p>
+        <p>上传本地皮肤<input type="file" id="fileUpload" accept="image/png" onchange="uploadSkin()" /></p>
+        <p><i>由于客户端信任白名单，请使用textures.minecraft.net域名下的纹理链接，否则仅可预览</i></p>
         <input type="text" id="url" placeholder="请输入皮肤纹理的URL" onblur="generateCommand()">
         
         <label for="name">玩家名称:</label>
@@ -25,7 +26,6 @@
             <option value="true">是</option>
         </select>
 
-        <!-- 横向排列两个元素 -->
         <div id="head-box">
             <canvas id="head-preview" width="64" height="64"></canvas>
             <div id="head-container"></div>
@@ -36,6 +36,7 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="scripts/3d.js"></script>
+    <script src="scripts/upload.js"></script>
     <script>
         function generateCommand() {
             updateHeadPreview();
