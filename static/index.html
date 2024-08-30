@@ -101,15 +101,16 @@
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(img, 8, 8, 8, 8, 0, 0, 64, 64);
                 };
+                loadSkin();
             } else {
                 const canvas = document.getElementById('head-preview');
                 const ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = "#3a3f4b";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+                resetSkin();
             }
             
-            loadSkin();
             generateCommand();
         }
 
