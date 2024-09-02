@@ -67,8 +67,8 @@
             }
         });
 
-        const scheme_domain = `${window.location.protocol}//${window.location.host}`;
-        const scheme_domain_path = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+        const scheme_domain = `${window.location.origin}`;
+        const scheme_domain_path = `${window.location.origin}${window.location.pathname}`;
         function generateCommand() {
             const target = document.getElementById('target').value.trim();
             const skin_url = document.getElementById('skin_url').value.trim();
@@ -87,7 +87,7 @@
                 return;
             }
 
-            skinUrl = new URL(skin_url, `${window.location.protocol}//${window.location.host}${window.location.pathname}`);
+            skinUrl = new URL(skin_url, `${window.location.origin}${window.location.pathname}`);
             if (skinUrl.hostname == 'textures.minecraft.net') {
                 id = skinUrl.pathname.split('/').pop();
             } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.includes('texture')) {
