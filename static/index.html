@@ -105,8 +105,13 @@
                 const location_url = new URL(window.location);
                 location_url.searchParams.delete('texture');
                 location_url.searchParams.delete('t');
-                if (skinUrl.hostname == window.location.hostname) {
-                    location_url.searchParams.set('url', skinUrl.pathname.substr(1));
+
+                if (skinUrl.href.startsWith(scheme_domain_path)) {
+                    short_url = skinUrl.href.substr(scheme_domain_path.length);
+                    if (short_url.startsWith('/')) {
+                        short_url = short_url.substr(1);
+                    }
+                    location_url.searchParams.set('url', short_url);
                 } else {
                     location_url.searchParams.set('url', skin_url);
                 }
