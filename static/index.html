@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OhtoAi - Minecraft 自定义纹理头颅生成器</title>
     <link rel="stylesheet" href="styles/index.css">
+    <icon href="favicon.ico" type="image/x-icon">
 </head>
 <body>
     <h1><a href="/">OhtoAi - Minecraft 自定义纹理头颅生成器</a></h1>
@@ -77,13 +78,19 @@
             
             if (!skin_url) {
                 document.getElementById('output').innerText = '请填写皮肤纹理URL';
+                const location_url = new URL(window.location);
+                location_url.searchParams.delete('texture');
+                location_url.searchParams.delete('t');
+                location_url.searchParams.delete('url');
+                location_url.searchParams.delete('u');
+                window.history.pushState({}, 0, location_url);
                 return;
             }
 
             skinUrl = new URL(skin_url, `${window.location.protocol}//${window.location.host}${window.location.pathname}`);
             if (skinUrl.hostname == 'textures.minecraft.net') {
                 id = skinUrl.pathname.split('/').pop();
-            } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.includes('uploads')) {
+            } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.includes('texture')) {
                 id = skinUrl.pathname.split('/').pop().split('.').shift();
             }
 
@@ -99,7 +106,7 @@
                 location_url.searchParams.delete('texture');
                 location_url.searchParams.delete('t');
                 if (skinUrl.hostname == window.location.hostname) {
-                    location_url.searchParams.set('url', skinUrl.pathname);
+                    location_url.searchParams.set('url', skinUrl.pathname.substr(1));
                 } else {
                     location_url.searchParams.set('url', skin_url);
                 }
@@ -181,17 +188,15 @@
         function init(){
             const location_url = new URL(window.location);
             const texture = location_url.searchParams.get('texture') || location_url.searchParams.get('t');
-            const input_url = location_url.searchParams.get('url') || location_url.searchParams.get('u');
+            const input_url = location_url.searchParams.get('url') || location_url.searchParams.get('u') || "ohtoai.png";
             if (texture) {
                 if (texture.length == 64) {
                     document.getElementById('skin_url').value = `https://textures.minecraft.net/texture/${texture}`;
                 } else {
-                    document.getElementById('skin_url').value = `${scheme_domain_path}uploads/${texture}.png`;
+                    document.getElementById('skin_url').value = `${scheme_domain_path}texture/${texture}.png`;
                 }
-            } else if (input_url) {
-                document.getElementById('skin_url').value = input_url;
             } else {
-                document.getElementById('skin_url').value = `${scheme_domain_path}ohtoai.png`;
+                document.getElementById('skin_url').value = input_url;
             }
             updateHeadPreview();
         }

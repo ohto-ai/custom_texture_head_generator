@@ -37,13 +37,13 @@ def upload_file():
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         if not os.path.exists(filepath):
             file.save(filepath)
-        file_url = f"/uploads/{filename}"
+        file_url = f"/texture/{filename}"
         return jsonify(success=True, url=file_url)
     
     return jsonify(success=False, message="Invalid file type"), 400
 
 # 提供静态资源服务
-@app.route('/uploads/<filename>')
+@app.route('/texture/<filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
