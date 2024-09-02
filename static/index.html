@@ -90,7 +90,7 @@
             skinUrl = new URL(skin_url, `${window.location.origin}${window.location.pathname}`);
             if (skinUrl.hostname == 'textures.minecraft.net') {
                 id = skinUrl.pathname.split('/').pop();
-            } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.includes('texture')) {
+            } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.includes('/texture/')) {
                 id = skinUrl.pathname.split('/').pop().split('.').shift();
             }
 
