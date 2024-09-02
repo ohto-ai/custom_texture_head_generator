@@ -173,12 +173,15 @@
         function init(){
             const location_url = new URL(window.location);
             const texture = location_url.searchParams.get('texture') || location_url.searchParams.get('t');
+            const input_url = location_url.searchParams.get('url') || location_url.searchParams.get('u');
             if (texture) {
                 if (texture.length == 64) {
                     document.getElementById('skin_url').value = `https://textures.minecraft.net/texture/${texture}`;
                 } else {
                     document.getElementById('skin_url').value = `${scheme_domain_path}uploads/${texture}.png`;
                 }
+            } else if (input_url) {
+                document.getElementById('skin_url').value = input_url;
             } else {
                 document.getElementById('skin_url').value = `${scheme_domain_path}ohtoai.png`;
             }
