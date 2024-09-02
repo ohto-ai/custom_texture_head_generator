@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles/index.css">
 </head>
 <body>
-    <h1>OhtoAi - Minecraft 自定义纹理头颅生成器</h1>
+    <h1><a href="/">OhtoAi - Minecraft 自定义纹理头颅生成器</a></h1>
     <h2>适用于 Minecraft JE 1.13-1.20 (command_block)</h2>
     <div class="#content-container">
         <label for="target">Give目标:</label>
@@ -91,11 +91,19 @@
                 const location_url = new URL(window.location);
                 location_url.searchParams.set('texture', id);
                 location_url.searchParams.delete('t');
+                location_url.searchParams.delete('url');
+                location_url.searchParams.delete('u');
                 window.history.pushState({}, 0, location_url);
             } else {
                 const location_url = new URL(window.location);
                 location_url.searchParams.delete('texture');
                 location_url.searchParams.delete('t');
+                if (skinUrl.hostname == window.location.hostname) {
+                    location_url.searchParams.set('url', skinUrl.pathname);
+                } else {
+                    location_url.searchParams.set('url', skin_url);
+                }
+                location_url.searchParams.delete('u');
                 window.history.pushState({}, 0, location_url);
             }
 
