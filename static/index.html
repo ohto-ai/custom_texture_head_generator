@@ -87,7 +87,7 @@
                 return;
             }
 
-            skinUrl = new URL(skin_url, `${window.location.origin}${window.location.pathname}`);
+            skinUrl = new URL(skin_url, window.location);
             if (skinUrl.hostname == 'textures.minecraft.net') {
                 id = skinUrl.pathname.split('/').pop();
             } else if (skinUrl.hostname == window.location.hostname && skinUrl.pathname.includes('/texture/')) {
@@ -119,7 +119,7 @@
                 window.history.pushState({}, 0, location_url);
             }
 
-            const base64 = btoa(`{"textures":{"SKIN":{"url":"${skin_url}"}}}`);
+            const base64 = btoa(`{"textures":{"SKIN":{"url":"${skinUrl.href}"}}}`);
             const name_prop = name ? `,Name:"${name}"` : '';
             const nbtData = `{SkullOwner:{Id:[I;0,0,0,0]${name_prop},Properties:{textures:[{Value:"${base64}"}]}},display:{Lore:["{\\"text\\":\\"${scheme_domain}\\"}"]}}`;
 
@@ -169,7 +169,8 @@
             }
             generateCommand();
             const output = document.getElementById('output').innerText;
-            if (URL(skin_url).hostname != 'textures.minecraft.net') {
+            skinUrl = new URL(skin_url, window.location);
+            if (skinUrl.hostname != 'textures.minecraft.net') {
                 alert('非textures.minecraft.net域名下的纹理链接，可能无法被客户端信任');
             }
 
